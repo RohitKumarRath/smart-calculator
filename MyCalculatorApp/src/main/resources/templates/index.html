@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Smart Calculator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: lightblue;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .calculator {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            width: 90vw;
+            max-width: 360px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #display {
+            width: 100%;
+            height: 50px;
+            font-size: 1.4rem;
+            text-align: right;
+            padding: 10px;
+            border-radius: 12px;
+            border: none;
+            margin-bottom: 15px;
+            color: #00ff66;
+            background: #333;
+            box-shadow: inset 0 0 5px #000;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            width: 100%;
+        }
+
+        .buttons button {
+            height: 55px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 10px;
+            background: #444;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .buttons button:hover {
+            background: #666;
+        }
+
+        .buttons .operator {
+            background: #ff9500;
+        }
+
+        .buttons .equal {
+            background: #28a745;
+        }
+
+        .buttons .clear {
+            background: #dc3545;
+        }
+
+        @media screen and (max-width: 480px) {
+            .calculator {
+                padding: 15px;
+                border-radius: 20px;
+            }
+
+            #display {
+                font-size: 1.2rem;
+                height: 45px;
+            }
+
+            .buttons button {
+                height: 50px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <form method="post" action="/calculate">
+            <input type="text" id="display" name="expression" th:value="${result != null ? result : expression}" placeholder="0" readonly />
+            <div class="buttons">
+                <button type="button" onclick="press('7')">7</button>
+                <button type="button" onclick="press('8')">8</button>
+                <button type="button" onclick="press('9')">9</button>
+                <button type="button" class="operator" onclick="press('/')">÷</button>
+
+                <button type="button" onclick="press('4')">4</button>
+                <button type="button" onclick="press('5')">5</button>
+                <button type="button" onclick="press('6')">6</button>
+                <button type="button" class="operator" onclick="press('*')">×</button>
+
+                <button type="button" onclick="press('1')">1</button>
+                <button type="button" onclick="press('2')">2</button>
+                <button type="button" onclick="press('3')">3</button>
+                <button type="button" class="operator" onclick="press('-')">−</button>
+
+                <button type="button" onclick="press('0')">0</button>
+                <button type="button" onclick="press('.')">.</button>
+                <button type="button" onclick="press('%')">%</button>
+                <button type="button" class="operator" onclick="press('+')">+</button>
+
+                <button type="button" onclick="press('(')">(</button>
+                <button type="button" onclick="press(')')">)</button>
+                <button type="button" class="clear" onclick="clearDisplay()">C</button>
+                <button type="submit" class="equal">=</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function press(val) {
+            const display = document.getElementById('display');
+            display.value += val;
+        }
+
+        function clearDisplay() {
+            document.getElementById('display').value = '';
+        }
+        
+        const display = document.getElementById('display');
+
+        function press(val) {
+            display.value += val;
+        }
+
+        function clearDisplay() {
+            display.value = '';
+        }
+
+        // 🔥 Keyboard Interaction
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+
+            if (!isNaN(key)) {
+                press(key); // numbers
+            } else if (['+', '-', '*', '/', '.', '(', ')'].includes(key)) {
+                press(key); // operators
+            } else if (key === '%') {
+                press('%');
+            } else if (key === 'Enter') {
+                event.preventDefault();
+                document.querySelector('form').submit(); // submit form
+            } else if (key === 'Backspace') {
+                event.preventDefault();
+                display.value = display.value.slice(0, -1); // remove last character
+            } else if (key.toLowerCase() === 'c') {
+                clearDisplay(); // clear if 'c' pressed
+            }
+        });
+    </script>
+</body>
+</html>
