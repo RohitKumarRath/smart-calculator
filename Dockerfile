@@ -14,4 +14,5 @@ RUN chmod +x ./mvnw && ./mvnw clean package -DskipTests
 EXPOSE 8080
 
 # Run the jar file
-CMD ["java", "-jar", "$(find target -name '*.jar' | head -n 1)"]
+CMD ["java", "-jar", "target/Calculator-0.0.1-SNAPSHOT.jar"]
+
