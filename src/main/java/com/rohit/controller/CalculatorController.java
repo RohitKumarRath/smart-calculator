@@ -33,9 +33,16 @@ public class CalculatorController {
     public String calculate(@RequestParam("expression") String expression, RedirectAttributes redirectAttributes) {
         try {
             String preprocessed = preprocessExpression(expression);
-            String result = calculatorService.evaluateExpression(preprocessed);
-            redirectAttributes.addFlashAttribute("expression", result); // show result in input box
-            redirectAttributes.addFlashAttribute("result", result);
+            String rawResult = calculatorService.evaluateExpression(preprocessed);
+
+            // Format result: Remove ".0" if it's a whole number
+            String formattedResult = rawResult;
+            if (rawResult.matches("\\d+\\.0")) {
+                formattedResult = rawResult.substring(0, rawResult.indexOf("."));
+            }
+
+            redirectAttributes.addFlashAttribute("expression", formattedResult); // show result in input box
+            redirectAttributes.addFlashAttribute("result", formattedResult);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("expression", expression);
             redirectAttributes.addFlashAttribute("result", "Error");
@@ -43,6 +50,7 @@ public class CalculatorController {
 
         return "redirect:/";
     }
+
 
     private String preprocessExpression(String expression) {
         // Pattern: A + B% → A + (A * B / 100)
